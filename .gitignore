@@ -1,0 +1,60 @@
+steelseries-engine
+*.S
+
+# Doxygen
+html
+latex
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+bin
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.gb
+
+# Nix
+/result
+
+# IDE
+.idea
+.vscode
+neovim.json
+compile_flags.txt
+
+# Trash files
+.cache
+vgcore.*
+*.swp
+build
+cmake-build-debug
+
+### gitignore
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
