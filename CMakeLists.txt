@@ -33,5 +33,5 @@ ADD_SUBDIRECTORY(src/)
 
 # PROJECT EXECUTABLE
 ADD_EXECUTABLE(steelseries-engine src/main.c)
-TARGET_LINK_LIBRARIES(steelseries-engine PRIVATE engine)
+TARGET_LINK_LIBRARIES(steelseries-engine PRIVATE driver)
 

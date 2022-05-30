@@ -31,7 +31,7 @@
               src = ./.;
               buildInputs = [ ];
               nativeBuildInputs = with pkgs; [
-                libusb1
+                hidapi
               ];
             };
           };

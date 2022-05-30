@@ -1,4 +1,5 @@
-#include <libusb-1.0/libusb.h>
-#include <stdio.h>
+#include <stdbool.h>
+
+#include "driver.h"
 
 int main(void) {}
