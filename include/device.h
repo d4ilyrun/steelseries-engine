@@ -1,15 +1,37 @@
 #pragma once
 
+#include <stdbool.h>
 #include <stdint.h>
+
+#include "utils.h"
 
 /// The mouse model supported by the driver.
 /// Currently set to 'Rival 310' since it is the model I am using.
 /// \warning should be changed when implementing support for different models
-#define RIVAL_310 0
-#define DEVICE RIVAL_310
+#define DEFAULT_DEVICE rival310
 
-/// Steelserie's vendor id as shown by `lsusb`
+/// Steelseries' vendor id as shown by `lsusb`
 #define STEELSERIES_VENDOR_ID 0x1038
+
+/**
+ * \brief Fetch information about the device.
+ * \param _device the model of the device
+ *
+ * Currently available names are:
+ * - rival310
+ *
+ * \see driver_device_info
+ */
+#define DEVICE_INFO(_device) device_info_##_device()
+
+/**
+ * \brief DEVICE_INFO function declaration.
+ * \param _device the model of the device
+ *
+ * \see DEVICE_INFO
+ */
+#define DEVICE_INFO_DECL(_device) \
+    struct driver_device_info *device_info_##_device()
 
 /**
  * \struct driver_device_info
@@ -47,4 +69,22 @@ struct driver_device_info {
      * The output endpoint is 2 (EP 2) and its address is 0x82.
      */
     uint8_t endpoint_address;
+
+    /** \brief EVENT HANDLERS
+     *
+     * They are function pointers pointing to functions that handle certain
+     * events related to the device. For example, changing the RGB
+     * values will call the `rgb_event_handler` handler.
+     *
+     * If a device model doesn't handle a particular event, set the related
+     * handler function pointer to NULL.
+     */
+
+    bool (*rgb_event_handler)(u8, u8, u8);
 };
+
+DEVICE_INFO_DECL(rival310);
+
+#ifdef DEVICE_NAME
+#undef DEVICE_NAME
+#endif

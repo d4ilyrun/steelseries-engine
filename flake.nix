@@ -32,6 +32,7 @@
               buildInputs = [ ];
               nativeBuildInputs = with pkgs; [
                 hidapi
+                udev
               ];
             };
           };
@@ -45,6 +46,7 @@
             packages = with pkgs; [
               usbutils
               wireshark
+              doxygen
             ];
 
             # -02 enforces -D_FORTIFY_SOURCE=2 which breaks debugging

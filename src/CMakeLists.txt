@@ -1,6 +1,14 @@
+ADD_LIBRARY(log STATIC log.c)
+
+ADD_SUBDIRECTORY(device)
+
 ADD_LIBRARY(
     driver STATIC
-    device/rival310.c
+    tmp.c
 )
 
-TARGET_LINK_LIBRARIES(driver PRIVATE hidapi-hidraw)
+TARGET_LINK_LIBRARIES(driver PRIVATE
+    hidapi-hidraw
+    device
+    log
+)
