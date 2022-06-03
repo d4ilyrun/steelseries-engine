@@ -121,6 +121,7 @@ struct device_color_mode {
             u8 red;
             u8 green;
             u8 blue;
+            u8 alpha;
 #else
             u8 alpha; // We need it here but it is ignored
             u8 blue;

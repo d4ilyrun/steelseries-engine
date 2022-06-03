@@ -53,7 +53,17 @@ int main(void)
 
     struct driver_device_info *rival310_info = DEVICE_INFO(rival310);
     struct r310_rgb_params params = {
-        LOGO, {STATIC, .color.rgba = 0x3151FF00}, {5000}, false, 0, 1};
+        LOGO, {STATIC, .color.rgba = 0x3151FFFF}, {5000}, true, 0, {{{0}}}};
+
+    params.cycle[0x21].alpha = true;
+    params.cycle[0x44].rgba = 0x58FF36FF;
+    params.cycle[0x65].alpha = true;
+    params.cycle[0x88].rgba = 0xFF1CE5FF;
+    params.cycle[0xA4].alpha = true;
+    params.cycle[0xC0].rgba = 0xFFC13BFF;
+    params.cycle[0xDE].alpha = true;
+    params.cycle[0xFC].rgba = 0x3151FFFF;
+
     rival310_info->rgb_event_handler(&params);
 
     driver_hid_device = DRIVER_CONNECT_DEVICE(DEFAULT_DEVICE);

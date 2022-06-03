@@ -47,6 +47,8 @@ enum r310_buttons
     NONE = 0x80
 };
 
+/// Parameters given to the `r310_handle_rgb` function
+/// \see r310_handle_rgb
 struct r310_rgb_params {
     ///< The led to apply the config on
     enum mouse_led_id led;
@@ -58,6 +60,12 @@ struct r310_rgb_params {
     bool repeat;
     ///< Buttons that should restart a cycle when clicked
     enum r310_buttons triggers;
-    ///< The number of points in a cycle
-    u8 points;
+
+    /**
+     * \brief The actual color cycle. NULL if not a cycle.
+     *
+     * \warning Every defined color point should have its `alpha` value set to
+     * 1-255 as it is used to determine which colors are actually set.
+     */
+    union color cycle[255];
 };
