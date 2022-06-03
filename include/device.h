@@ -34,6 +34,15 @@
     struct driver_device_info *device_info_##_device()
 
 /**
+ * \enum mouse_led_id
+ */
+enum led_id
+{
+    LOGO,
+    WHEEL
+};
+
+/**
  * \struct driver_device_info
  *
  * Holds information about a model of mouse.
@@ -80,7 +89,7 @@ struct driver_device_info {
      * handler function pointer to NULL.
      */
 
-    bool (*rgb_event_handler)(u8, u8, u8);
+    bool (*rgb_event_handler)(u8, u8, u8, enum led_id);
 };
 
 /**
@@ -91,6 +100,26 @@ enum driver_rgb_mode
 {
     OFF,
     STATIC
+};
+
+/**
+ * \union driver_duration
+ * \brief Represents a duration in miliseconds.
+ *
+ * The duration spans over 2 bytes and can later be separated into bytes.
+ */
+union driver_duration {
+    u16 miliseconds;
+
+    struct {
+#ifdef __LITTLE_ENDIAN__
+        u8 msb;
+        u8 lsb;
+#else
+        u8 lsb;
+        u8 msb;
+#endif
+    };
 };
 
 DEVICE_INFO_DECL(rival310);

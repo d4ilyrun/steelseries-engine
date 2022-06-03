@@ -46,7 +46,7 @@ hid_device *driver_hid_device;
 int main(void)
 {
     struct driver_device_info *rival310_info = DEVICE_INFO(rival310);
-    rival310_info->rgb_event_handler(0x12, 0x12, 0x12);
+    rival310_info->rgb_event_handler(0x12, 0x12, 0x12, LOGO);
 
     if (!driver_init()) {
         log_add("Couldn't init driver", LOG_ERROR);
@@ -55,10 +55,6 @@ int main(void)
 
     driver_hid_device = DRIVER_CONNECT_DEVICE(DEFAULT_DEVICE);
     if (driver_hid_device == NULL) {
-        log_add_hid("Unable to connect to device", LOG_ERROR);
-        log_add_hid("Unable to connect to device", LOG_ERROR);
-        log_add_hid("Unable to connect to device", LOG_ERROR);
-        log_add_hid("Unable to connect to device", LOG_ERROR);
         log_add_hid("Unable to connect to device", LOG_ERROR);
         driver_exit(-2);
     }
