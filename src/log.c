@@ -11,6 +11,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "driver.h"
+
 /**
  * \struct log_message
  * \brief A log message to store for later use

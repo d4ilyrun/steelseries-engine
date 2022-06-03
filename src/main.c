@@ -51,9 +51,19 @@ int main(void)
         driver_exit(-1);
     }
 
+    driver_hid_device = DRIVER_CONNECT_DEVICE(DEFAULT_DEVICE);
+    if (driver_hid_device == NULL) {
+        log_add_hid("Unable to connect to device", LOG_ERROR);
+        driver_exit(-2);
+    }
+
+    wchar_t name[512];
+    hid_get_manufacturer_string(driver_hid_device, name, 512);
+    printf("Serial Number String: (%d) %ls", name[0], name);
+
     struct driver_device_info *rival310_info = DEVICE_INFO(rival310);
     struct r310_rgb_params params = {
-        LOGO, {STATIC, .color.rgba = 0x3151FFFF}, {5000}, true, 0, {{{0}}}};
+        LOGO, {CYCLE, .color.rgba = 0x3151FFFF}, {5000}, true, 0, {{{0}}}};
 
     params.cycle[0x21].alpha = true;
     params.cycle[0x44].rgba = 0x58FF36FF;
@@ -65,16 +75,6 @@ int main(void)
     params.cycle[0xFC].rgba = 0x3151FFFF;
 
     rival310_info->rgb_event_handler(&params);
-
-    driver_hid_device = DRIVER_CONNECT_DEVICE(DEFAULT_DEVICE);
-    if (driver_hid_device == NULL) {
-        log_add_hid("Unable to connect to device", LOG_ERROR);
-        driver_exit(-2);
-    }
-
-    wchar_t name[512];
-    hid_get_manufacturer_string(driver_hid_device, name, 512);
-    printf("Serial Number String: (%d) %ls", name[0], name);
 
     driver_exit(0);
 }

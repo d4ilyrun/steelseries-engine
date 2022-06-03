@@ -2,8 +2,6 @@
 
 #include <stdbool.h>
 
-#include "driver.h"
-
 /**
  * \enum log_error_level
  * \brief The degree of importance of a log message

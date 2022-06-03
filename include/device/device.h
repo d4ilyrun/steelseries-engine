@@ -103,7 +103,8 @@ struct device_color_mode {
     enum color_mode
     {
         OFF,
-        STATIC
+        STATIC,
+        CYCLE
     } mode;
 
     /**

@@ -60,6 +60,9 @@ struct rival310_led_protocol {
 bool rival310_check_led_btn_request(struct rival310_led_protocol req)
 {
     switch (req.command) {
+    case 0x5B:
+        return true;
+
     default:
         return true;
     }
@@ -104,7 +107,7 @@ static bool rival310_handle_rgb(void *raw_params)
     // Structure: 8 bits, each representing a btn, set to 1 if btn is a trigger.
     data[23] = params->triggers & 0x3F; // ignore bits 6-7
 
-    // Set color or first color of a cycle
+    // Set main color
     data[28] = params->color.color.red;
     data[29] = params->color.color.green;
     data[30] = params->color.color.blue;
@@ -127,8 +130,6 @@ static bool rival310_handle_rgb(void *raw_params)
         if (!cycle[i].alpha)
             continue;
 
-        printf("%X: %X\n", i, cycle[i].rgba);
-
         data[data_index++] = cycle[i].red;
         data[data_index++] = cycle[i].green;
         data[data_index++] = cycle[i].blue;
@@ -137,6 +138,10 @@ static bool rival310_handle_rgb(void *raw_params)
         data[data_index++] = (i - last_point) & 0xFF;
         last_point = i;
         nb_points += 1;
+
+        // Only set first color when not a cycle
+        if (params->color.mode != CYCLE)
+            break;
     }
 
     // number of "points" in a cycle, max 255 (u8).
@@ -145,15 +150,15 @@ static bool rival310_handle_rgb(void *raw_params)
 
     for (int i = 0; i < RIVAL310_LED_PROTOCOL_LENGTH; ++i)
         printf("%02X ", data[i]);
-    // printf("%d: %02X\n", i, data[i]);
-    fflush(stdout);
+    printf("\n");
 
     if (!rival310_check_led_btn_request(request)) {
         log_add("Rival 310: Invalid LED request ! Stopped.", LOG_ERROR);
         return false;
     }
 
-    return true;
+    // Send over the request and return any eventual error
+    return driver_send_report(0x0, (void *)data, sizeof(request));
 }
 
 /**
