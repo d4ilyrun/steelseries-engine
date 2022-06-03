@@ -39,6 +39,10 @@ hid_device *driver_connect(struct driver_device_info *device)
 void driver_exit(int exit_code)
 {
     log_exit();
+
+    if (driver_hid_device != NULL)
+        hid_close(driver_hid_device);
+
     _exit(exit_code);
 }
 
