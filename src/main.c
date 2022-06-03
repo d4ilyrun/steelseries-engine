@@ -67,7 +67,7 @@ int main(void)
 
     struct driver_device_info *rival310_info = DEVICE_INFO(rival310);
     struct r310_rgb_params params = {
-        LOGO, {CYCLE, .color.rgba = 0x3151FFFF}, {5000}, true, 0, {{{0}}}};
+        WHEEL, {STATIC, .color.rgba = 0x123456FF}, {5000}, true, 0, {{{0}}}};
 
     params.cycle[0x21].alpha = true;
     params.cycle[0x44].rgba = 0x58FF36FF;
@@ -78,7 +78,7 @@ int main(void)
     params.cycle[0xDE].alpha = true;
     params.cycle[0xFC].rgba = 0x3151FFFF;
 
-    rival310_info->rgb_event_handler(&params);
+    rival310_info->led_event_handler(&params);
 
     driver_exit(0);
 }

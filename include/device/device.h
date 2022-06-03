@@ -89,7 +89,7 @@ struct driver_device_info {
      * handler function pointer to NULL.
      */
 
-    bool (*rgb_event_handler)(void *);
+    bool (*led_event_handler)(void *);
 };
 
 /**
