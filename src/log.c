@@ -59,13 +59,11 @@ struct driver_logger {
 };
 
 /// The driver's logger
-static struct driver_logger driver_logger;
+static struct driver_logger driver_logger = {0};
 
 bool log_init(enum log_error_level level)
 {
-    driver_logger = (struct driver_logger){
-        .log_file = 0, .has_log_file = false, .level = level, .messages = NULL};
-
+    driver_logger.level = level;
     return true;
 }
 
@@ -166,7 +164,8 @@ void log_add_hid(char *msg, enum log_error_level level)
 }
 
 /**
- * \brief Get the string representation of the current timestamp.
+ * \brief Get string representation from a timestamp.
+ * \param timestamp The timestamp to parse
  * Formated as: HH:MM:SS
  */
 char *log_time_str(time_t timestamp)

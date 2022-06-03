@@ -10,7 +10,7 @@
  */
 enum log_error_level
 {
-    LOG_NONE,
+    LOG_MSG = 0,
     LOG_WARNING,
     LOG_ERROR
 };
