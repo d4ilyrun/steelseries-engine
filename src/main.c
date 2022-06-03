@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "device.h"
+#include "device/device.h"
+#include "device/rival310.h"
 #include "driver.h"
 #include "log.h"
 
@@ -51,7 +52,9 @@ int main(void)
     }
 
     struct driver_device_info *rival310_info = DEVICE_INFO(rival310);
-    rival310_info->rgb_event_handler(0x12, 0x12, 0x12, LOGO);
+    struct r310_rgb_params params = {
+        LOGO, {STATIC, .color.rgba = 0x3151FF00}, {5000}, false, 0, 1};
+    rival310_info->rgb_event_handler(&params);
 
     driver_hid_device = DRIVER_CONNECT_DEVICE(DEFAULT_DEVICE);
     if (driver_hid_device == NULL) {

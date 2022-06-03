@@ -36,7 +36,7 @@
 /**
  * \enum mouse_led_id
  */
-enum led_id
+enum mouse_led_id
 {
     LOGO,
     WHEEL
@@ -89,37 +89,48 @@ struct driver_device_info {
      * handler function pointer to NULL.
      */
 
-    bool (*rgb_event_handler)(u8, u8, u8, enum led_id);
+    bool (*rgb_event_handler)(void *);
 };
 
 /**
- * \enum driver_rgb_mode
- * \brief The different existing RGB modes
+ * \struct device_color_mode
  */
-enum driver_rgb_mode
-{
-    OFF,
-    STATIC
-};
+struct device_color_mode {
+    /**
+     * \enum color_mode
+     * \brief The different existing RGB modes
+     */
+    enum color_mode
+    {
+        OFF,
+        STATIC
+    } mode;
 
-/**
- * \union driver_duration
- * \brief Represents a duration in miliseconds.
- *
- * The duration spans over 2 bytes and can later be separated into bytes.
- */
-union driver_duration {
-    u16 miliseconds;
-
-    struct {
+    /**
+     * \union color
+     * \brief The actual color.
+     *
+     * Can be set using an `{R, G, B}` struct or its rgba integer equivalent.
+     *
+     * \warning When in cycle mode, this shoud also be the first color of the
+     * cycle.
+     */
+    union color {
+        struct {
 #ifdef __LITTLE_ENDIAN__
-        u8 msb;
-        u8 lsb;
+            u8 red;
+            u8 green;
+            u8 blue;
 #else
-        u8 lsb;
-        u8 msb;
+            u8 alpha; // We need it here but it is ignored
+            u8 blue;
+            u8 green;
+            u8 red;
 #endif
-    };
+        };
+
+        u32 rgba;
+    } color;
 };
 
 DEVICE_INFO_DECL(rival310);

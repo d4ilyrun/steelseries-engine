@@ -9,28 +9,18 @@
 
 #define _GNU_SOURCE
 
+#include "device/rival310.h"
+
 #include <stdio.h>
 #include <string.h>
 
-#include "device.h"
+#include "device/device.h"
 #include "driver.h"
 #include "log.h"
 #include "utils.h"
 
 #define DEVICE_NAME rival310
 #define DEVICE_NAME_STR "Steelseries Rival 310"
-
-/**
- * \brief The 310's USB protocol total length
- * \warning The size changes when configuring LEDs and buttons.
- * \see RIVAL310_LED_PROTOCOL_LENGTH
- * \see RIVAL310_BTN_PROTOCOL_LENGTH
- */
-#define RIVAL310_PROTOCOL_LENGTH 64
-
-/// \see RIVAL310_PROTOCOL_LENGTH
-#define RIVAL310_LED_PROTOCOL_LENGTH 262
-#define RIVAL310_BTN_PROTOCOL_LENGTH RIVAL310_LED_PROTOCOL_LENGTH
 
 /**
  * \struct rival310_usb_protocol
@@ -76,18 +66,6 @@ bool rival310_check_led_btn_request(struct rival310_led_protocol req)
     return true;
 }
 
-/// \brief Available mouse buttons.
-enum r310_trigger
-{
-    L_CLICK = 0x00,
-    R_CLICK = 0x02,
-    W_CLICK = 0x04,
-    BACK = 0x10,
-    FWD = 0x20,
-    DPI = 0x40,
-    NONE = 0x80
-};
-
 /**
  * \function rival310_handle_rgb
  * \brief construct and send a valid LED event request
@@ -95,55 +73,52 @@ enum r310_trigger
  *
  * \return `true` if the request was send, `false` otherwise
  */
-static bool rival310_handle_rgb(u8 r, u8 g, u8 b, enum led_id led)
+static bool rival310_handle_rgb(void *raw_params)
 {
+    struct r310_rgb_params *params = raw_params;
     struct rival310_led_protocol request = {0};
     u8 *data = (u8 *)&request;
 
     request.command = 0x5B; // LED command number
 
     // led id number
-    data[2] = led;
+    data[2] = params->led;
 
-    // Set cycle duration, in BIG ENDIAN order.
-    union driver_duration duration = {0};
-
-    if (duration.miliseconds < 1980 || duration.miliseconds > 30000) {
+    if (params->cycle_duration.milliseconds < 1980 ||
+        params->cycle_duration.milliseconds > 30000) {
         log_print("Rival 310: Invalid cycle duration. Set to 5000ms.",
                   LOG_WARNING);
-        duration.miliseconds = 5000;
+        params->cycle_duration.milliseconds = 5000;
     }
 
-    data[3] = duration.lsb;
-    data[4] = duration.msb;
+    // Set cycle duration, in BIG ENDIAN order.
+    data[3] = params->cycle_duration.lsb;
+    data[4] = params->cycle_duration.msb;
 
     // Wether a cycle repeats, 0 if it repeats 1 if not
-    bool repeat = false; // TODO: add choice
-    data[19] = !repeat;
+    data[19] = !params->repeat;
 
     // Set trigger
     // Trigger: When one of the selected button is pressed, the cycle restarts
     // Structure: 8 bits, each representing a btn, set to 1 if btn is a trigger.
-    data[23] = DPI | BACK;
-    data[23] |= 0x3F; // Ignore bits 6-7
+    data[23] = params->triggers & 0x3F; // ignore bits 6-7
 
     // number of "points" in a cycle, max 255 (u8).
     // A cycle has a duration of 255 ticks
     data[27] = 1; // TODO: add color cycle
 
     // Set color or first color of a cycle
-    data[28] = r;
-    data[29] = g;
-    data[30] = b;
+    data[28] = params->color.color.red;
+    data[29] = params->color.color.green;
+    data[30] = params->color.color.blue;
 
     // TODO: color-cycle: 31-261
 
     for (int i = 0; i < RIVAL310_LED_PROTOCOL_LENGTH; ++i)
-        printf("%02X ", data[i]);
-    printf("\n");
+        printf("%d: %02X\n", i, data[i]);
 
     if (!rival310_check_led_btn_request(request)) {
-        log_add("Invalid LED request ! Stopped request.", LOG_ERROR);
+        log_add("Invalid LED request ! Stopped.", LOG_ERROR);
         return false;
     }
 
