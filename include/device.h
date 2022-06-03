@@ -83,6 +83,16 @@ struct driver_device_info {
     bool (*rgb_event_handler)(u8, u8, u8);
 };
 
+/**
+ * \enum driver_rgb_mode
+ * \brief The different existing RGB modes
+ */
+enum driver_rgb_mode
+{
+    OFF,
+    STATIC
+};
+
 DEVICE_INFO_DECL(rival310);
 
 #ifdef DEVICE_NAME
